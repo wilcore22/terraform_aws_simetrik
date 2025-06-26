@@ -106,3 +106,22 @@ resource "aws_subnet" "public_subnets" {
  }
 }
 
+### sg para alb y ecs
+
+resource "aws_security_group" "alb" {
+  vpc_id = aws_vpc.aws_vpc_company[0].id
+  
+}
+
+
+
+resource "aws_security_group" "ecs" {
+  vpc_id = aws_vpc.aws_vpc_company[0].id
+  
+}
+
+
+resource "aws_elasticache_subnet_group" "redis" {
+  name       = "${var.app_name}-redis-subnet-group"
+  subnet_ids = aws_subnet.private_subnets[*].id
+}

@@ -17,52 +17,41 @@ module "aws_network" {
 }
 
 
-
-######## Cluster EKS ######
-
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "20.31.2"
-
-  cluster_name    = "dev-cluster"
-  cluster_version = "1.31"
-
-  bootstrap_self_managed_addons = false
-  cluster_addons = {
-    coredns                = {}
-    kube-proxy             = {}
-    vpc-cni                = {}
-  }
-
- 
-  cluster_endpoint_public_access = true
-
-  
-  enable_cluster_creator_admin_permissions = true
-
-  vpc_id                   = module.aws_network.aws_vpc_id
-  subnet_ids               = module.aws_network.private_subnet_ids
-  control_plane_subnet_ids = module.aws_network.private_subnet_ids
-
-  
-  eks_managed_node_group_defaults = {
-    instance_types = ["t2.micro"]
-  }
-
-  eks_managed_node_groups = {
-    example = {
-      
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t2.micro"]
-
-      min_size     = 2
-      max_size     = 10
-      desired_size = 2
-    }
-  }
-
-  tags = {
-    Environment = "dev"
-    Terraform   = "true"
-  }
+### dynamo ##
+module "aws_dynamo"{
+source = "./modules/dynamo"
+app_name = var.app_name
 }
+
+
+##### ecs ####
+
+module "aws_ecs_alb"{
+source = "./modules/ecs-alb"
+app_name = var.app_name
+vpc_id = module.aws_network.aws_vpc_id
+subnet_public = module.aws_network.public_subnet_ids
+security_group_alb = module.aws_network.aws_security_group_alb
+subnet_private = module.aws_network.private_subnet_ids
+security_group_ecs = module.aws_network.aws_security_group_ecs
+}
+
+
+module "aws_cache"{
+source = "./modules/cache"
+app_name = var.app_name
+vpc_id = module.aws_network.aws_vpc_id
+elasticache_subnet_group_redis = module.aws_network.aws_elasticache_subnet_group_redis
+sg_ecs = module.aws_network.aws_security_group_ecs
+}
+
+
+##### ecs ####
+
+module "aws_s3_cloudfront"{
+source = "./modules/s3-cloudfront"
+app_name = var.app_name
+}
+
+
+

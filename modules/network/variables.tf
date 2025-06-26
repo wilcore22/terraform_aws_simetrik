@@ -96,5 +96,9 @@ variable "azs" {
  default     = []
 }
 
+variable "app_name" {
+  default = ""
+}
+
 
 

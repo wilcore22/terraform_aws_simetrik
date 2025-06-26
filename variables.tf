@@ -1,21 +1,18 @@
 # VPC
 
 variable "create_vpc" {default = true}
-variable "name" {default = "simetrik"}
+variable "name" {default = "pragma"}
 variable "cidr" {default = "10.0.0.0/24"}
 variable "instance_tenancy" {default = "default"}
 variable "enable_dns_hostnames" {default = true}
 variable "enable_dns_support" {default = true}
 variable "tags" {default = true}
 
-variable "name_vpc" {default = "vpc-simetrik"}
+variable "name_vpc" {default = "vpc-pragma"}
 
 # IGW
 variable "create_igw" {default = true}
-variable "name_igw" {default = "igw-simetrik"}
-
-
-
+variable "name_igw" {default = "igw-pragma"}
 
 
 ### subnet private_subnet_cidrs1
@@ -39,5 +36,11 @@ variable "public_subnet_cidrs" {
  type        = list(string)
  description = "Public Subnet CIDR values"
  default     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+}
+
+######
+
+variable "app_name" {
+  default = "jfc-ecommerce"
 }
 
